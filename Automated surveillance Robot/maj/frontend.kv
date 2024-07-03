@@ -1,0 +1,193 @@
+<HomeScreen>:
+    Screen:
+        padding: 10
+        MDLabel:
+            size_hint_x: 0.95
+            halign: 'center'
+            font_style: 'H4'
+            text: "Welcome to Surveillance Robot"
+            pos_hint: {"center_x": 0.5, "center_y": 0.9}
+        
+        
+        MDBoxLayout:
+            orientation: 'vertical'
+            spacing: 25
+            padding: 0, 25, 0, 0
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint: None, None
+            size: self.minimum_size
+            canvas.after:
+                Color:
+                    rgba: 0, 0, 0, 0.9
+                Line:
+                    rounded_rectangle: (self.x, self.y, self.right - self.x, self.top - self.y, 16)
+            MDLabel:
+                size_hint: 1, None
+                height: self.texture_size[1]
+                halign: 'center'
+                valign: 'top'
+                text: 'Choose how to control robot'
+            
+            MDBoxLayout:
+                size_hint: None,None
+                size: self.minimum_size
+                orientation: 'vertical'
+                spacing: dp(25)
+                padding: 25
+                canvas.after:
+                    Color:
+                        rgba: 0, 0, 0, 0.9
+                    Line:
+                        rounded_rectangle: (self.x, self.y, self.right - self.x, self.top - self.y, 15)
+                MDRaisedButton:
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    text: 'Manual mode'
+                    on_release: root.change_mode('manual')
+                MDRaisedButton:
+                    pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                    text: 'Automated (for surveillance)'
+                    on_release: root.change_mode('auto')
+
+
+
+<AutomaticScreen>:
+    Screen:
+        MDLabel:
+            text: 'You can minimise this app'
+            halign: 'center'
+            font_style: 'H6'
+            pos_hint: {"center_y": 0.6}
+        
+        MDRaisedButton:
+            text: 'Take a look'
+            on_press: app.launch_website()
+            pos_hint: {"center_x": .5, "center_y": .5}
+            id: look_up
+        
+        MDRectangleFlatButton:
+            text: 'Minimise app'
+            pos_hint: {'center_x': 0.5, 'top': look_up.y / root.height - 0.05}
+            on_release: app.minimize_app()
+            
+        MDLabel:
+            pos_hint: {"center_y": 0.02}
+            text: '* Don\\'t close, just minimise this app'
+            halign: 'center'
+            font_style: 'Caption'
+
+
+
+<ManualScreen>:
+    Screen:
+        MDLabel:
+            text: 'Press \\'Launch website\\' to open camera in your browser'
+            pos_hint: {'center_y': 0.75}
+            halign: 'center'
+        
+        MDRectangleFlatIconButton:
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            text: 'Launch website'
+            on_release: app.launch_website()
+
+
+
+<ConnectScreen>
+    Screen:
+        MDLabel:
+            text: 'Connect to robot'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            halign: 'center'
+        RelativeLayout:
+            MDTextField:
+                id: ip
+                isFocus: False
+                text: '192.168.'
+                on_text: root.text_input()
+                mode: 'rectangle'
+                hint_text: 'Enter IP address'
+                size_hint_x: 0.8
+                pos_hint: {'center_x' :0.5, 'center_y': 0.7}
+                helper_text: 'This field is required'
+                helper_text_mode: 'on_error'
+                on_focus: root.text_focus(self)
+                
+            MDIconButton:
+                id: help_button
+                pos_hint: {'right': ip.right / root.right - 0.01, 'center_y': ip.center_y / root.height - 0.006}
+                icon: 'help'
+                on_release: root.helper()
+        
+        MDFillRoundFlatIconButton:
+            text: 'connect'
+            icon: 'android'
+            id: connect
+            disabled: True
+            on_release: root.connect()
+            pos_hint: {'center_x': 0.5, 'center_y': 0.05}
+
+
+<LoadingScreen>:
+    Screen:
+        MDSpinner:
+            size_hint: None, None
+            size: 100, 100
+            pos_hint: {"center_x": 0.5, 'center_y': 0.55}
+        MDLabel:
+            text: 'Connecting...'
+            halign: 'center'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.35}
+
+
+
+<MySwiper>
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDLabel:
+            size_hint_y: None
+            height: self.texture_size[1] + 50
+            text: root.text
+            pos_hint: {'x': 0.02}
+        Image:
+            source: root.image
+            radius: [20,]
+
+<HelpScreen>
+    MDScreen:
+        MDSwiper:
+            id: swiper
+            size_hint_y: 0.8
+            pos_hint: {'center_y': 0.55}
+            items_spacing: '0px'
+            MySwiper:
+                text: 'Goto mobile hotspot settings and turn on hotspot'
+                image: 'images/help_1.png'
+    
+            MySwiper:
+                text: 'Change the Network name and password'
+                image: 'images/help_2.png'
+    
+            MySwiper:
+                text: 'Wait till \\'esp32-ED97BC\\' appears and then tap the new connected device'
+                image: 'images/help_3.png'
+    
+            MySwiper:
+                text: 'After opening it you can see the IP address of the device in the network'
+                image: 'images/help_4.png'
+    
+    FloatLayout:
+        # size_hint_y: None
+        # height: self.minimum_height
+        # pos_hint: {'center_x': 0.5}
+        MDRoundFlatButton:
+            pos_hint: {'y': 0.01, 'x': 0.02}
+            text: 'Previous'
+            icon: 'arrow-left'
+            on_release:
+                swiper.swipe_left()
+        MDRoundFlatButton:
+            text: 'Next'
+            icon_right: 'arrow-right'
+            pos_hint: {'right': 0.98, 'y': 0.01}
+            on_release:
+                swiper.swipe_right()
+        
